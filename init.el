@@ -77,7 +77,10 @@
   (interactive)
   (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
 
+(setq old-compile-command compile-command)
+
 (defun set-compile-cargo ()
+  (make-local-variable 'compile-command)
   (setq compile-command "cargo build"))
 
 (add-hook 'rust-mode-hook 'set-compile-cargo)
