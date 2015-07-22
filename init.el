@@ -9,6 +9,10 @@
 
 ;; (setq inhibit-default-init)
 
+(setq emacs23 (eq emacs-major-version 23))
+(when emacs23 
+  (load "~/.emacs.d/package.el"))
+
 ;; allow compiling with F1 key (added 6-30-95, 97lhz)
 (global-set-key [f1] 'compile)
 ;; set the default compile-command to "make" added 6-13-96, 99grh
@@ -57,6 +61,8 @@
 (package-initialize)
 (unless (package-installed-p 'scala-mode2)
   (package-refresh-contents) (package-install 'scala-mode2))
+(unless (package-installed-p 'rust-mode)
+  (package-refresh-contents) (package-install 'rust-mode))
 
 
 (defun comment-line-toggle ()
