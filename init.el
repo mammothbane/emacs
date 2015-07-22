@@ -76,3 +76,8 @@
   "comment or uncomment current line"
   (interactive)
   (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
+
+(defun set-compile-cargo ()
+  (setq compile-command "cargo build"))
+
+(add-hook 'rust-mode-hook 'set-compile-cargo)
