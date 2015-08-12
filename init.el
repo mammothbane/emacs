@@ -71,6 +71,23 @@
 (unless (package-installed-p 'rust-mode)
   (package-refresh-contents) (package-install 'rust-mode))
 
+(unless (package-installed-p 'git-blame)
+  (package-refresh-contents) (package-install 'git-blame))
+
+(unless (package-installed-p 'git-commit)
+  (package-refresh-contents) (package-install 'git-commit))
+
+(unless (package-installed-p 'git-timemachine)
+  (package-refresh-contents) (package-install 'git-timemachine))
+
+(unless (package-installed-p 'gitconfig-mode)
+  (package-refresh-contents) (package-install 'git))
+
+(unless (package-installed-p 'gitignore-mode)
+  (package-refresh-contents) (package-install 'gitignore-mode))
+
+(unless (package-installed-p 'fish-mode)
+  (package-refresh-contents) (package-install 'fish-mode))
 
 (defun comment-line-toggle ()
   "comment or uncomment current line"
