@@ -25,7 +25,6 @@
 ;; any non-nil value. This will create lots of little .saves files, so beware!
 (setq auto-save-default nil)
 
-
 (setq emacs21 (eq emacs-major-version 21))
 
 (when emacs21
@@ -56,11 +55,12 @@
   ;; If there is more than one, they won't work right.
  )
 
-
 (require 'package)
 (add-to-list 'package-archives
 	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
+
+;; language support
 (when emacs23 
   (unless (package-installed-p 'scala-mode)
     (package-refresh-contents) (package-install 'scala-mode)))
@@ -71,6 +71,10 @@
 (unless (package-installed-p 'rust-mode)
   (package-refresh-contents) (package-install 'rust-mode))
 
+(unless (package-installed-p 'fish-mode)
+  (package-refresh-contents) (package-install 'fish-mode))
+
+;; git-related packages
 (unless (package-installed-p 'git-blame)
   (package-refresh-contents) (package-install 'git-blame))
 
@@ -86,16 +90,19 @@
 (unless (package-installed-p 'gitignore-mode)
   (package-refresh-contents) (package-install 'gitignore-mode))
 
-(unless (package-installed-p 'fish-mode)
-  (package-refresh-contents) (package-install 'fish-mode))
+(unless (package-installed-p 'git-dwim)
+  (package-refresh-contents) (package-install 'git-dwim))
+
+(unless (package-installed-p 'gist)
+  (package-refresh-contents) (package-install 'gist))
 
 (defun comment-line-toggle ()
   "comment or uncomment current line"
   (interactive)
   (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
 
-(setq old-compile-command compile-command)
 
+;; have rust projects default to 'cargo build' for compile command
 (defun set-compile-cargo ()
   (make-local-variable 'compile-command)
   (setq compile-command "cargo build"))
