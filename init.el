@@ -14,6 +14,8 @@
   (load "~/.emacs.d/package.el"))
 
 (setq emacs24 (eq emacs-major-version 24))
+(setq emacsminor4 (>= emacs-minor-version 4))
+(setq emacs24+ (> emacs-major-version 24))
 
 ;; allow compiling with F1 key (added 6-30-95, 97lhz)
 (global-set-key [f1] 'compile)
@@ -64,7 +66,7 @@
 (when emacs23 
   (unless (package-installed-p 'scala-mode)
     (package-refresh-contents) (package-install 'scala-mode)))
-(when emacs24
+(when (or emacs24 emacs24+)
   (unless (package-installed-p 'scala-mode2)
     (package-refresh-contents) (package-install 'scala-mode2)))
 
@@ -78,14 +80,15 @@
 (unless (package-installed-p 'git-blame)
   (package-refresh-contents) (package-install 'git-blame))
 
-(unless (package-installed-p 'git-commit)
-  (package-refresh-contents) (package-install 'git-commit))
+(when (or emacs24+ (and emacs24 emacsminor4))
+  (unless (package-installed-p 'git-commit)
+  (package-refresh-contents) (package-install 'git-commit)))
 
 (unless (package-installed-p 'git-timemachine)
   (package-refresh-contents) (package-install 'git-timemachine))
 
 (unless (package-installed-p 'gitconfig-mode)
-  (package-refresh-contents) (package-install 'git))
+  (package-refresh-contents) (package-install 'gitconfig-mode))
 
 (unless (package-installed-p 'gitignore-mode)
   (package-refresh-contents) (package-install 'gitignore-mode))
