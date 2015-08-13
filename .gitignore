@@ -1,5 +1,4 @@
-auto-save-list
-%backup%~
-elpa
-*~
-var
+*
+!.gitignore
+!init.el
+!package.el
