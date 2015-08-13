@@ -96,8 +96,11 @@
 (unless (package-installed-p 'git-dwim)
   (package-refresh-contents) (package-install 'git-dwim))
 
-(unless (package-installed-p 'gist)
-  (package-refresh-contents) (package-install 'gist))
+(if (or (eq system-type 'windows-nt) (eq system-type 'ms-dos))
+    (unless (package-installed-p 'yagist)
+       (package-refresh-contents) (package-install 'yagist))
+    (unless (package-installed-p 'gist)
+      (package-refresh-contents) (package-install 'gist)))
 
 (defun comment-line-toggle ()
   "comment or uncomment current line"
