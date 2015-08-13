@@ -4,10 +4,6 @@
 (when emacs23 
   (load "~/.emacs.d/package.el"))
 
-(setq emacs24 (eq emacs-major-version 24))
-(setq emacsminor4 (>= emacs-minor-version 4))
-(setq emacs24+ (> emacs-major-version 24))
-
 ;; allow compiling with F1 key (added 6-30-95, 97lhz)
 (global-set-key [f1] 'compile)
 ;; set the default compile-command to "make" added 6-13-96, 99grh
@@ -114,5 +110,3 @@ locate PACKAGE."
   (setq compile-command "cargo build"))
 
 (add-hook 'rust-mode-hook 'set-compile-cargo)
-
-
