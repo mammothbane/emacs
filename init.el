@@ -1,14 +1,5 @@
 ;; totally revamped by 95ssb jun 1993, for emacs 19
 
-;; autoloading of modes for various programming languages is done in
-;; /usr/cs-local/emacs/site-lisp/default.el.  to use a mode which is
-;; commented out, paste the code here and remove the comments (the ;;
-;; bits).  to eliminate a mode which is currently autoloading,
-;; uncomment the line (setq inhibit-default-init) and paste in those
-;; modes from default.el which you still wish to use.
-
-;; (setq inhibit-default-init)
-
 (setq emacs23 (eq emacs-major-version 23))
 (when emacs23 
   (load "~/.emacs.d/package.el"))
@@ -103,7 +94,7 @@ locate PACKAGE."
 
 (if (or (eq system-type 'windows-nt) (eq system-type 'ms-dos))
     (require-package 'yagist)
-  (require-packge 'gist))
+  (require-package 'gist))
 
 (require-package 'git-blame)
 (require-package 'git-timemachine)
