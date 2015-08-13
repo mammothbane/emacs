@@ -62,45 +62,54 @@
 	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
 
+;; from purcell's .emacs.d
+(defun require-package (package &optional min-version no-refresh)
+  "Install given PACKAGE, optionally requiring MIN-VERSION.
+If NO-REFRESH is non-nil, the available package lists will not be
+re-downloaded in order to locate PACKAGE."
+  (if (package-installed-p package min-version)
+      t
+    (if (or (assoc package package-archive-contents) no-refresh)
+        (package-install package)
+      (progn
+        (package-refresh-contents)
+        (require-package package min-version t)))))
+
+;; from purcell's .emacs.d
+(defun maybe-require-package (package &optional min-version no-refresh)
+  "Try to install PACKAGE, and return non-nil if successful.
+In the event of failure, return nil and print a warning message.
+Optionally require MIN-VERSION.  If NO-REFRESH is non-nil, the
+available package lists will not be re-downloaded in order to
+locate PACKAGE."
+  (condition-case err
+      (require-package package min-version no-refresh)
+    (error
+     (message "Couldn't install package `%s': %S" package err)
+     nil)))
+
 ;; language support
-(when emacs23 
-  (unless (package-installed-p 'scala-mode)
-    (package-refresh-contents) (package-install 'scala-mode)))
-(when (or emacs24 emacs24+)
-  (unless (package-installed-p 'scala-mode2)
-    (package-refresh-contents) (package-install 'scala-mode2)))
+(if (<= emacs-major-version 23) 
+  (require-package 'scala-mode)
+  (require-package 'scala-mode2))
 
-(unless (package-installed-p 'rust-mode)
-  (package-refresh-contents) (package-install 'rust-mode))
-
-(unless (package-installed-p 'fish-mode)
-  (package-refresh-contents) (package-install 'fish-mode))
+(require-package 'rust-mode)
+(require-package 'fish-mode)
 
 ;; git-related packages
-(unless (package-installed-p 'git-blame)
-  (package-refresh-contents) (package-install 'git-blame))
-
-(when (or emacs24+ (and emacs24 emacsminor4))
-  (unless (package-installed-p 'git-commit)
-  (package-refresh-contents) (package-install 'git-commit)))
-
-(unless (package-installed-p 'git-timemachine)
-  (package-refresh-contents) (package-install 'git-timemachine))
-
-(unless (package-installed-p 'gitconfig-mode)
-  (package-refresh-contents) (package-install 'gitconfig-mode))
-
-(unless (package-installed-p 'gitignore-mode)
-  (package-refresh-contents) (package-install 'gitignore-mode))
-
-(unless (package-installed-p 'git-dwim)
-  (package-refresh-contents) (package-install 'git-dwim))
+(when (or (> emacs-major-version 24) 
+	  (and (eq emacs-major-version 24) (>= emacs-minor-version 4)))
+	  (require-package 'git-commit))
 
 (if (or (eq system-type 'windows-nt) (eq system-type 'ms-dos))
-    (unless (package-installed-p 'yagist)
-       (package-refresh-contents) (package-install 'yagist))
-    (unless (package-installed-p 'gist)
-      (package-refresh-contents) (package-install 'gist)))
+    (require-package 'yagist)
+  (require-packge 'gist))
+
+(require-package 'git-blame)
+(require-package 'git-timemachine)
+(require-package 'gitconfig-mode)
+(require-package 'gitignore-mode)
+(require-package 'git-dwim)
 
 (defun comment-line-toggle ()
   "comment or uncomment current line"
@@ -114,3 +123,5 @@
   (setq compile-command "cargo build"))
 
 (add-hook 'rust-mode-hook 'set-compile-cargo)
+
+
