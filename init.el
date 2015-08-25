@@ -97,6 +97,7 @@ locate PACKAGE."
 (require-package 'gitconfig-mode)
 (require-package 'gitignore-mode)
 (require-package 'git-dwim)
+(require-package 'achievements)
 
 (defun comment-line-toggle ()
   "comment or uncomment current line"
