@@ -1,5 +1,8 @@
 ;; totally revamped by 95ssb jun 1993, for emacs 19
 
+;; per-machine settings. okay if it's not there.
+(load "~/.emacs.d/local.el" t)
+
 (setq emacs23 (eq emacs-major-version 23))
 (when emacs23 
   (load "~/.emacs.d/package.el"))
@@ -76,12 +79,18 @@ locate PACKAGE."
      nil)))
 
 ;; language support
+
+;; turing complete
 (if (<= emacs-major-version 23) 
   (require-package 'scala-mode)
   (require-package 'scala-mode2))
-
 (require-package 'rust-mode)
 (require-package 'fish-mode)
+(require-package 'haskell-mode)
+(require-package 'gradle-mode)
+
+;;markup
+(require-package 'haml-mode)
 
 ;; git-related packages
 (when (or (> emacs-major-version 24) 
