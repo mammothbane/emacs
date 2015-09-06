@@ -84,20 +84,23 @@ locate PACKAGE."
 (if (<= emacs-major-version 23) 
   (require-package 'scala-mode)
   (require-package 'scala-mode2))
+(when (>= emacs-major-version 24)
+  (require-package 'haml-mode)  
+  (require-package 'fish-mode))
+
 (require-package 'rust-mode)
-(require-package 'fish-mode)
 (require-package 'haskell-mode)
 (require-package 'gradle-mode)
 
-;;markup
-(require-package 'haml-mode)
+
 
 ;; git-related packages
 (when (or (> emacs-major-version 24) 
 	  (and (eq emacs-major-version 24) (>= emacs-minor-version 4)))
 	  (require-package 'git-commit))
 
-(if (or (eq system-type 'windows-nt) (eq system-type 'ms-dos))
+(if (or (or (eq system-type 'windows-nt) (eq system-type 'ms-dos)) 
+	(< emacs-major-version 24))
     (require-package 'yagist)
   (require-package 'gist))
 
