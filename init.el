@@ -80,7 +80,6 @@ locate PACKAGE."
 
 ;; language support
 
-;; turing complete
 (if (<= emacs-major-version 23) 
   (require-package 'scala-mode)
   (require-package 'scala-mode2))
@@ -92,7 +91,11 @@ locate PACKAGE."
 (require-package 'haskell-mode)
 (require-package 'gradle-mode)
 
-
+(require-package 'go-mode)
+(require-package 'go-autocomplete)
+(require-package 'govet)
+(require-package 'golint)
+(require-package 'flymake-go)
 
 ;; git-related packages
 (when (or (> emacs-major-version 24) 
@@ -110,12 +113,6 @@ locate PACKAGE."
 (require-package 'gitignore-mode)
 (require-package 'git-dwim)
 (require-package 'achievements)
-
-(require-package 'go-mode)
-(require-package 'go-autocomplete)
-(require-package 'govet)
-(require-package 'golint)
-(require-package 'flymake-go)
 
 (defun comment-line-toggle ()
   "comment or uncomment current line"
