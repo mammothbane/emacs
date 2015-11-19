@@ -111,6 +111,12 @@ locate PACKAGE."
 (require-package 'git-dwim)
 (require-package 'achievements)
 
+(require-package 'go-mode)
+(require-package 'go-autocomplete)
+(require-package 'govet)
+(require-package 'golint)
+(require-package 'flymake-go)
+
 (defun comment-line-toggle ()
   "comment or uncomment current line"
   (interactive)
@@ -119,7 +125,17 @@ locate PACKAGE."
 
 ;; have rust projects default to 'cargo build' for compile command
 (defun set-compile-cargo ()
-  (make-local-variable 'compile-command)
-  (setq compile-command "cargo build"))
+  (if (not (string-match "cargo" compile-command))
+      (set (make-local-variable 'compile-command)
+	   "cargo build")))
+
+(defun my-go-mode-hook ()
+  (setq gofmt-command "goimports")
+  (add-hook 'before-save-hook 'gofmt-before-save)
+  (if (not (string-match "go" compile-command))
+      (set (make-local-variable 'compile-command)
+	   "go build -v && go test -v && go vet"))
+  (local-set-key (kbd "M-.") 'godef-jump))
 
 (add-hook 'rust-mode-hook 'set-compile-cargo)
+(add-hook 'go-mode-hook 'my-go-mode-hook)
