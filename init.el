@@ -78,6 +78,8 @@ locate PACKAGE."
      (message "Couldn't install package `%s': %S" package err)
      nil)))
 
+(require-package 'flycheck)
+
 ;; language support
 
 (if (<= emacs-major-version 23) 
@@ -95,7 +97,6 @@ locate PACKAGE."
 (require-package 'go-autocomplete)
 (require-package 'govet)
 (require-package 'golint)
-(require-package 'flymake-go)
 
 ;; git-related packages
 (when (or (> emacs-major-version 24) 
@@ -132,7 +133,18 @@ locate PACKAGE."
   (if (not (string-match "go" compile-command))
       (set (make-local-variable 'compile-command)
 	   "go build -v && go test -v && go vet"))
-  (local-set-key (kbd "M-.") 'godef-jump))
+  (local-set-key (kbd "M-.") 'godef-jump)
+  (auto-complete-mode))
+
+;; to load these packages, make sure go is installed,
+;; GOPATH is set, and `go get github.com/dougm/goflymake`
+(when (getenv "GOPATH")
+  (setq gopath (getenv "GOPATH"))
+  (setq goflymake (concat gopath "/src/github.com/dougm/goflymake"))
+  (when (file-accessible-directory-p goflymake)
+    (add-to-list 'load-path goflymake)
+    (require 'go-flymake)
+    (require 'go-flycheck)))
 
 (add-hook 'rust-mode-hook 'set-compile-cargo)
 (add-hook 'go-mode-hook 'my-go-mode-hook)
