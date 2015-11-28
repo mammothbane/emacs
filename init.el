@@ -99,27 +99,32 @@ locate PACKAGE."
 (require-package 'golint)
 
 ;; git-related packages
-(when (or (> emacs-major-version 24) 
-	  (and (eq emacs-major-version 24) (>= emacs-minor-version 4)))
-	  (require-package 'git-commit))
+(require-package 'magit)
 
 (if (or (or (eq system-type 'windows-nt) (eq system-type 'ms-dos)) 
 	(< emacs-major-version 24))
     (require-package 'yagist)
   (require-package 'gist))
 
-(require-package 'git-blame)
-(require-package 'git-timemachine)
-(require-package 'gitconfig-mode)
-(require-package 'gitignore-mode)
-(require-package 'git-dwim)
 (require-package 'achievements)
+
+(require-package 'org)
+
+(when (> emacs-major-version 24)
+  (load-theme 'solarized t)
+  (add-hook 'after-make-frame-functions
+	    (lambda (frame)
+	      (let ((mode (if (display-graphic-p frame) 'light 'dark)))
+		(set-frame-parameter frame 'background-mode mode)
+		(set-terminal-parameter frame 'background-mode mode))
+	      (enable-theme 'solarized)))
+  )
+
 
 (defun comment-line-toggle ()
   "comment or uncomment current line"
   (interactive)
   (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
-
 
 ;; have rust projects default to 'cargo build' for compile command
 (defun set-compile-cargo ()
@@ -136,8 +141,8 @@ locate PACKAGE."
   (local-set-key (kbd "M-.") 'godef-jump)
   (auto-complete-mode))
 
-;; to load these packages, make sure go is installed,
-;; GOPATH is set, and `go get github.com/dougm/goflymake`
+;; to load these packages, make sure go is installed and
+;; GOPATH is set, then run `go get github.com/dougm/goflymake`
 (when (getenv "GOPATH")
   (setq gopath (getenv "GOPATH"))
   (setq goflymake (concat gopath "/src/github.com/dougm/goflymake"))
