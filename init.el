@@ -31,20 +31,21 @@
 (load "~/.local_emacs" t)
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(frame-background-mode (quote dark))
  '(inhibit-startup-screen t)
  '(kill-do-not-save-duplicates t)
  '(kill-ring-max 200)
  '(kill-whole-line nil)
  '(save-interprogram-paste-before-kill t))
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  )
 
 (require 'package)
@@ -110,16 +111,12 @@ locate PACKAGE."
 
 (require-package 'org)
 
-(when (> emacs-major-version 24)
-  (load-theme 'solarized t)
-  (add-hook 'after-make-frame-functions
-	    (lambda (frame)
-	      (let ((mode (if (display-graphic-p frame) 'light 'dark)))
-		(set-frame-parameter frame 'background-mode mode)
-		(set-terminal-parameter frame 'background-mode mode))
-	      (enable-theme 'solarized)))
-  )
-
+;; solarized
+(require-package 'color-theme)
+(require-package 'color-theme-solarized)
+(if (>= emacs-major-version 24)
+    (load-theme 'solarized t)
+  (color-theme-solarized))
 
 (defun comment-line-toggle ()
   "comment or uncomment current line"
