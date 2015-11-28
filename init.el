@@ -1,5 +1,3 @@
-;; totally revamped by 95ssb jun 1993, for emacs 19
-
 ;; per-machine settings. okay if it's not there.
 (load "~/.emacs.d/local.el" t)
 
@@ -7,14 +5,10 @@
 (when emacs23 
   (load "~/.emacs.d/package.el"))
 
-;; allow compiling with F1 key (added 6-30-95, 97lhz)
 (global-set-key [f1] 'compile)
-;; set the default compile-command to "make" added 6-13-96, 99grh
 (setq compile-command "make ")
 
-;; Don't create auto-save files (~/.saves-hostname-pid)
-;; To enable auto-saving, copy the line to your .local_emacs and set it to
-;; any non-nil value. This will create lots of little .saves files, so beware!
+;; creates a lot of small autosaves if set
 (setq auto-save-default nil)
 
 (setq emacs21 (eq emacs-major-version 21))
@@ -150,3 +144,13 @@ locate PACKAGE."
 
 (add-hook 'rust-mode-hook 'set-compile-cargo)
 (add-hook 'go-mode-hook 'my-go-mode-hook)
+
+(global-set-key (kbd "C-c s") 'eshell)
+(global-set-key (kbd "C-c i") (lambda ()
+				(interactive)
+				(find-file "~/.emacs.d/init.el")))
+(global-set-key (kbd "C-c ;") (lambda ()
+				(interactive)
+				(eval-buffer)
+				(message "Buffer eval complete.")))
+(global-set-key (kbd "C-c k") 'magit-status)
