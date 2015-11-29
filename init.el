@@ -21,9 +21,6 @@
 
 (global-font-lock-mode t)
 
-;; load .local_emacs if it exists OK if it's not there. (added 6-14-96, 99grh)
-(load "~/.local_emacs" t)
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -154,3 +151,7 @@ locate PACKAGE."
 				(eval-buffer)
 				(message "Buffer eval complete.")))
 (global-set-key (kbd "C-c k") 'magit-status)
+
+;; we want this last in order to override the upstream config
+(load "~/.local_emacs" t)
+
