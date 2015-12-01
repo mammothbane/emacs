@@ -92,6 +92,7 @@ locate PACKAGE."
 
 ;; git-related packages
 (require-package 'magit)
+(setq magit-push-always-verify nil)
 
 (if (or (or (eq system-type 'windows-nt) (eq system-type 'ms-dos)) 
 	(< emacs-major-version 24))
