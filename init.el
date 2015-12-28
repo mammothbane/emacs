@@ -147,6 +147,8 @@ locate PACKAGE."
 
 (add-hook 'rust-mode-hook 'set-compile-cargo)
 (add-hook 'go-mode-hook 'my-go-mode-hook)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
 (global-set-key (kbd "C-c s") 'eshell)
 (global-set-key (kbd "C-c i") (lambda ()
@@ -160,4 +162,3 @@ locate PACKAGE."
 
 ;; we want this last in order to override the upstream config
 (load "~/.local_emacs" t)
-
