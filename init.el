@@ -90,6 +90,8 @@ locate PACKAGE."
 (require-package 'govet)
 (require-package 'golint)
 
+(require-package 'markdown-mode)
+(require-package 'toml-mode)
 (require-package 'yaml-mode)
 
 ;; git-related packages
