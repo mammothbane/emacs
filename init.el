@@ -1,8 +1,19 @@
-;; per-machine settings. okay if it's not there.
+;;; package -- summary:
+;;; My init.el. Should probably be factored out into a bunch of files with specific functions,
+;;; but it's not yet.
+
+;;; Commentary:
+;;; See package summary for current remarks.
+
+;;; Code:
+
+;; per-machine settings. okay if it doesn't exist.
 (load "~/.emacs.d/local.el" t)
 
-(setq emacs23 (eq emacs-major-version 23))
-(when emacs23 
+(defvar init-emacs23 (eq emacs-major-version 23))
+(defvar init-emacs21 (eq emacs-major-version 21))
+
+(when init-emacs23
   (load "~/.emacs.d/package.el"))
 
 (global-set-key [f1] 'compile)
@@ -11,9 +22,7 @@
 ;; creates a lot of small autosaves if set
 (setq auto-save-default nil)
 
-(setq emacs21 (eq emacs-major-version 21))
-
-(when emacs21
+(when init-emacs21
   (tool-bar-mode -1)
   (tooltip-mode -1)
   (global-set-key [home] 'beginning-of-buffer)
@@ -74,11 +83,11 @@ locate PACKAGE."
 
 ;; language support
 
-(if (<= emacs-major-version 23) 
+(if (<= emacs-major-version 23)
   (require-package 'scala-mode)
   (require-package 'scala-mode2))
 (when (>= emacs-major-version 24)
-  (require-package 'haml-mode)  
+  (require-package 'haml-mode)
   (require-package 'fish-mode))
 
 (require-package 'rust-mode)
@@ -101,8 +110,9 @@ locate PACKAGE."
 (require-package 'gitignore-mode)
 (require-package 'gitconfig-mode)
 
-(if (or (or (eq system-type 'windows-nt) (eq system-type 'ms-dos)) 
-	(< emacs-major-version 24))
+(if (or (or (eq system-type 'windows-nt)
+      (eq system-type 'ms-dos))
+     (< emacs-major-version 24))
     (require-package 'yagist)
   (require-package 'gist))
 
@@ -118,17 +128,18 @@ locate PACKAGE."
   (color-theme-solarized))
 
 (defun comment-line-toggle ()
-  "comment or uncomment current line"
+  "Comment or uncomment current line."
   (interactive)
   (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
 
-;; have rust projects default to 'cargo build' for compile command
 (defun set-compile-cargo ()
+  "Rust projects default to 'cargo build' for compile command."
   (if (not (string-match "cargo" compile-command))
       (set (make-local-variable 'compile-command)
 	   "cargo build")))
 
 (defun my-go-mode-hook ()
+  "Set up goimports and gofmt for go-mode."
   (setq gofmt-command "goimports")
   (add-hook 'before-save-hook 'gofmt-before-save)
   (if (not (string-match "go" compile-command))
@@ -140,10 +151,10 @@ locate PACKAGE."
 ;; to load these packages, make sure go is installed and
 ;; GOPATH is set, then run `go get github.com/dougm/goflymake`
 (when (getenv "GOPATH")
-  (setq gopath (getenv "GOPATH"))
-  (setq goflymake (concat gopath "/src/github.com/dougm/goflymake"))
-  (when (file-accessible-directory-p goflymake)
-    (add-to-list 'load-path goflymake)
+  (defvar init-gopath (getenv "GOPATH"))
+  (defvar init-goflymake (concat init-gopath "/src/github.com/dougm/goflymake"))
+  (when (file-accessible-directory-p init-goflymake)
+    (add-to-list 'load-path init-goflymake)
     (require 'go-flymake)
     (require 'go-flycheck)))
 
@@ -151,6 +162,12 @@ locate PACKAGE."
 (add-hook 'go-mode-hook 'my-go-mode-hook)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11")))
+
+(global-auto-complete-mode t)
 
 (global-set-key (kbd "C-c s") 'eshell)
 (global-set-key (kbd "C-c i") (lambda ()
@@ -164,3 +181,6 @@ locate PACKAGE."
 
 ;; we want this last in order to override the upstream config
 (load "~/.local_emacs" t)
+
+(provide 'init)
+;;; init.el ends here
