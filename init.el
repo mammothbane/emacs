@@ -98,6 +98,8 @@ locate PACKAGE."
 (require-package 'go-autocomplete)
 (require-package 'govet)
 (require-package 'golint)
+(require-package 'protobuf-mode)
+(require-package 'flycheck-protobuf)
 
 (require-package 'markdown-mode)
 (require-package 'toml-mode)
