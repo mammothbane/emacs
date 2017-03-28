@@ -83,13 +83,15 @@ locate PACKAGE."
 
 ;; language support
 
-(if (<= emacs-major-version 23)
-  (require-package 'scala-mode)
-  (require-package 'scala-mode2))
+; (if (<= emacs-major-version 23)
+;  (require-package 'scala-mode)
+;  (require-package 'scala-mode2))
+
 (when (>= emacs-major-version 24)
   (require-package 'haml-mode)
   (require-package 'fish-mode))
 
+(require-package 'scala-mode)
 (require-package 'rust-mode)
 (require-package 'haskell-mode)
 (require-package 'gradle-mode)
@@ -99,14 +101,14 @@ locate PACKAGE."
 (require-package 'govet)
 (require-package 'golint)
 (require-package 'protobuf-mode)
-(require-package 'flycheck-protobuf)
+;(require-package 'flycheck-protobuf)
 
 (require-package 'markdown-mode)
 (require-package 'toml-mode)
 (require-package 'yaml-mode)
 
 ;; git-related packages
-(require-package 'magit)
+;(require-package 'magit)
 (setq magit-push-always-verify nil)
 
 (require-package 'gitignore-mode)
