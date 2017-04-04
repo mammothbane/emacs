@@ -21,6 +21,7 @@
 
 ;; creates a lot of small autosaves if set
 (setq auto-save-default nil)
+(setq vc-follow-symlinks nil)
 
 (when init-emacs21
   (tool-bar-mode -1)
