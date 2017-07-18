@@ -10,6 +10,8 @@
 ;; per-machine settings. okay if it doesn't exist.
 (load "~/.emacs.d/local.el" t)
 
+(defvar solarized-enabled t)
+
 (defvar init-emacs23 (eq emacs-major-version 23))
 (defvar init-emacs21 (eq emacs-major-version 21))
 
@@ -109,7 +111,7 @@ locate PACKAGE."
 (require-package 'yaml-mode)
 
 ;; git-related packages
-;(require-package 'magit)
+(require-package 'magit)
 (setq magit-push-always-verify nil)
 
 (require-package 'gitignore-mode)
@@ -128,9 +130,11 @@ locate PACKAGE."
 ;; solarized
 (require-package 'color-theme)
 (require-package 'color-theme-solarized)
-(if (>= emacs-major-version 24)
-    (load-theme 'solarized t)
-  (color-theme-solarized))
+(when solarized-enabled
+  ((if
+       (>= emacs-major-version 24)
+       (load-theme 'solarized t)
+     (color-theme-solarized))))
 
 (defun comment-line-toggle ()
   "Comment or uncomment current line."
@@ -170,7 +174,7 @@ locate PACKAGE."
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
-(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11")))
+(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++17")))
 
 (global-auto-complete-mode t)
 
