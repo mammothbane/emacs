@@ -95,9 +95,17 @@ locate PACKAGE."
   (require-package 'fish-mode))
 
 (require-package 'scala-mode)
+
 (require-package 'rust-mode)
+(require-package 'flycheck-rust)
+
 (require-package 'haskell-mode)
+(require-package 'flycheck-haskell)
+
 (require-package 'gradle-mode)
+
+(require-package 'swift-mode)
+(require-package 'flycheck-swift3)
 
 (require-package 'go-mode)
 (require-package 'go-autocomplete)
