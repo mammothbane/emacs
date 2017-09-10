@@ -139,10 +139,10 @@ locate PACKAGE."
 (require-package 'color-theme)
 (require-package 'color-theme-solarized)
 (when solarized-enabled
-  ((if
+  (if
        (>= emacs-major-version 24)
        (load-theme 'solarized t)
-     (color-theme-solarized))))
+     (color-theme-solarized)))
 
 (defun comment-line-toggle ()
   "Comment or uncomment current line."
