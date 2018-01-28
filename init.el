@@ -124,6 +124,8 @@ locate PACKAGE."
 
 (require-package 'gitignore-mode)
 (require-package 'gitconfig-mode)
+(require-package 'markdown-mode)
+(require-package 'dockerfile-mode)
 
 (if (or (or (eq system-type 'windows-nt)
       (eq system-type 'ms-dos))
