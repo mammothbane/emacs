@@ -10,6 +10,8 @@
 ;; per-machine settings. okay if it doesn't exist.
 (load "~/.emacs.d/local.el" t)
 
+(defvar solarized-enabled t)
+
 (defvar init-emacs23 (eq emacs-major-version 23))
 (defvar init-emacs21 (eq emacs-major-version 21))
 
@@ -233,6 +235,7 @@
 (use-package git-gutter)
 (use-package gitignore-mode)
 (use-package gitconfig-mode)
+(use-package dockerfile-mode)
 
 (if (or (or (eq system-type 'windows-nt)
       (eq system-type 'ms-dos))
@@ -248,9 +251,10 @@
 (use-package color-theme)
 (use-package color-theme-solarized)
 
-(if (>= emacs-major-version 24)
-    (load-theme 'solarized t)
-  (color-theme-solarized))
+(when solarized-enabled
+  (if (>= emacs-major-version 24)
+      (load-theme 'solarized t)
+    (color-theme-solarized)))
 
 (use-package rust-mode
   :config (defun rust-hook ()
@@ -291,7 +295,7 @@
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
-(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11")))
+(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++17")))
 
 (global-auto-complete-mode t)
 
