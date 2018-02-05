@@ -11,6 +11,9 @@
 (load "~/.emacs.d/local.el" t)
 
 (defvar solarized-enabled t)
+(setq custom-file "~/.emacs.d/custom.el")
+
+(load custom-file :noerror)
 
 (defvar init-emacs23 (eq emacs-major-version 23))
 (defvar init-emacs21 (eq emacs-major-version 21))
@@ -32,24 +35,6 @@
   (global-set-key [end] 'end-of-buffer))
 
 (global-font-lock-mode t)
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(frame-background-mode (quote dark))
- '(inhibit-startup-screen t)
- '(kill-do-not-save-duplicates t)
- '(kill-ring-max 200)
- '(kill-whole-line nil)
- '(save-interprogram-paste-before-kill t))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
 
 (require 'package)
 (setq
