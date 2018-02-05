@@ -50,108 +50,231 @@
  )
 
 (require 'package)
-(add-to-list 'package-archives
-	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(setq
+ package-archives '(("gnu" . "http://elpa.gnu.org/packages")
+		    ("org" . "http://orgmode.org/elpa/")
+		    ("melpa" . "http://melpa.org/packages/")
+		    ("melpa-stable" . "http://stable.melpa.org/packages/")))
+
+(defvar package-archive-priorities '(("melpa" . 1)))
+(defvar use-package-always-ensure t)
+
 (package-initialize)
+(when (not package-archive-contents)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
-;; from purcell's .emacs.d
-(defun require-package (package &optional min-version no-refresh)
-  "Install given PACKAGE, optionally requiring MIN-VERSION.
-If NO-REFRESH is non-nil, the available package lists will not be
-re-downloaded in order to locate PACKAGE."
-  (if (package-installed-p package min-version)
-      t
-    (if (or (assoc package package-archive-contents) no-refresh)
-        (package-install package)
-      (progn
-        (package-refresh-contents)
-        (require-package package min-version t)))))
+(require 'use-package)
 
-;; from purcell's .emacs.d
-(defun maybe-require-package (package &optional min-version no-refresh)
-  "Try to install PACKAGE, and return non-nil if successful.
-In the event of failure, return nil and print a warning message.
-Optionally require MIN-VERSION.  If NO-REFRESH is non-nil, the
-available package lists will not be re-downloaded in order to
-locate PACKAGE."
-  (condition-case err
-      (require-package package min-version no-refresh)
-    (error
-     (message "Couldn't install package `%s': %S" package err)
-     nil)))
-
-(require-package 'flycheck)
+(use-package flycheck)
 
 ;; language support
 
-; (if (<= emacs-major-version 23)
-;  (require-package 'scala-mode)
-;  (require-package 'scala-mode2))
-
 (when (>= emacs-major-version 24)
-  (require-package 'haml-mode)
-  (require-package 'fish-mode))
+  (use-package haml-mode)
+  (use-package fish-mode))
 
-(require-package 'scala-mode)
-(require-package 'rust-mode)
-(require-package 'haskell-mode)
-(require-package 'gradle-mode)
+(use-package haskell-mode)
+(use-package gradle-mode)
 
-(require-package 'go-mode)
-(require-package 'go-autocomplete)
-(require-package 'govet)
-(require-package 'golint)
-(require-package 'protobuf-mode)
-;(require-package 'flycheck-protobuf)
+(use-package protobuf-mode)
+;(use-package flycheck-protobuf)
 
-(require-package 'markdown-mode)
-(require-package 'toml-mode)
-(require-package 'yaml-mode)
+(use-package markdown-mode)
+(use-package toml-mode)
+(use-package yaml-mode)
+
+(use-package projectile
+  :demand
+  :init   (setq projectile-use-git-grep t)
+  :config (projectile-global-mode t)
+  :bind   (("s-f" . projectile-find-file)
+	   ("s-F" . projectile-grep)))
+
+(use-package undo-tree
+  :diminish undo-tree-mode
+  :config (global-undo-tree-mode)
+    :bind ("s-/" . undo-tree-visualize))
+
+(use-package flx-ido
+  :demand
+  :init
+  (setq
+   ido-enable-flex-matching t
+   ;; C-d to open directories
+   ;; C-f to revert to find-file
+   ido-show-dot-for-dired nil
+   ido-enable-dot-prefix t)
+  :config
+  (ido-mode 1)
+  (ido-everywhere 1)
+    (flx-ido-mode 1))
+
+(use-package goto-chg
+  :commands goto-last-change
+  ;; complementary to
+  ;; C-x r m / C-x r l
+  ;; and C-<space> C-<space> / C-u C-<space>
+  :bind (("C-." . goto-last-change)
+	          ("C-," . goto-last-change-reverse)))
+
+(use-package highlight-symbol
+  :diminish highlight-symbol-mode
+  :commands highlight-symbol
+    :bind ("s-h" . highlight-symbol))
+
+(use-package popup-imenu
+  :commands popup-imenu
+    :bind ("M-i" . popup-imenu))
+
+(use-package scala-mode)
+(use-package sbt-mode)
+(use-package ensime
+  :config (setq ensime-startup-notification nil))
+
+(use-package smartparens
+  :diminish smartparens-mode
+  :commands
+  smartparens-strict-mode
+  smartparens-mode
+  sp-restrict-to-pairs-interactive
+  sp-local-pair
+  :init
+  (setq sp-interactive-dwim t)
+  :config
+  (require 'smartparens-config)
+  (sp-use-smartparens-bindings)
+
+  (sp-pair "(" ")" :wrap "C-(") ;; how do people live without this?
+  (sp-pair "[" "]" :wrap "s-[") ;; C-[ sends ESC
+  (sp-pair "{" "}" :wrap "C-{")
+
+  ;; WORKAROUND https://github.com/Fuco1/smartparens/issues/543
+  (bind-key "C-<left>" nil smartparens-mode-map)
+  (bind-key "C-<right>" nil smartparens-mode-map)
+
+  (bind-key "s-<delete>" 'sp-kill-sexp smartparens-mode-map)
+    (bind-key "s-<backspace>" 'sp-backward-kill-sexp smartparens-mode-map))
+
+(defun contextual-backspace ()
+  "Hungry whitespace or delete word depending on context."
+  (interactive)
+  (if (looking-back "[[:space:]\n]\\{2,\\}" (- (point) 2))
+      (while (looking-back "[[:space:]\n]" (- (point) 1))
+	(delete-char -1))
+    (cond
+     ((and (boundp 'smartparens-strict-mode)
+	   smartparens-strict-mode)
+      (sp-backward-kill-word 1))
+     ((and (boundp 'subword-mode)
+	   subword-mode)
+      (subword-backward-kill 1))
+     (t
+      (backward-kill-word 1)))))
+
+(global-set-key (kbd "C-<backspace>") 'contextual-backspace)
+
+(use-package yasnippet
+  :diminish yas-minor-mode
+  :commands yas-minor-mode
+    :config (yas-reload-all))
+
+(use-package expand-region
+  :commands 'er/expand-region
+  :bind ("C-=" . er/expand-region))
+
+(require 'ensime-expand-region)
+
+(defun scala-mode-newline-comments ()
+  "Custom newline appropriate for `scala-mode'."
+  ;; shouldn't this be in a post-insert hook?
+  (interactive)
+  (newline-and-indent)
+  (scala-indent:insert-asterisk-on-multiline-comment))
+
+(bind-key "RET" 'scala-mode-newline-comments scala-mode-map)
+
+(add-hook 'scala-mode-hook
+	  (lambda ()
+	    (show-paren-mode)
+	    (smartparens-mode)
+	    (yas-minor-mode)
+	    (git-gutter-mode)
+	    (company-mode)
+	    (ensime-mode)
+	    (scala-mode:goto-start-of-code)
+	    (setq comment-start "/* "
+		  comment-end " */"
+		  comment-style 'multi-line
+		  comment-empty-lines t)))
+
+(sp-local-pair 'scala-mode "(" nil :post-handlers '(("||\n[i]" "RET")))
+(sp-local-pair 'scala-mode "{" nil :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
+
+(defun sp-restrict-c (sym)
+  "Smartparens restriction on `SYM' for C-derived parenthesis."
+  (sp-restrict-to-pairs-interactive "{([" sym))
+
+(bind-key "s-<delete>" (sp-restrict-c 'sp-kill-sexp) scala-mode-map)
+(bind-key "s-<backspace>" (sp-restrict-c 'sp-backward-kill-sexp) scala-mode-map)
+(bind-key "s-<home>" (sp-restrict-c 'sp-beginning-of-sexp) scala-mode-map)
+(bind-key "s-<end>" (sp-restrict-c 'sp-end-of-sexp) scala-mode-map)
+
+(bind-key "s-{" 'sp-rewrap-sexp smartparens-mode-map)
 
 ;; git-related packages
-;(require-package 'magit)
-(setq magit-push-always-verify nil)
+(use-package magit
+  :commands magit-status magit-blame
+  :init (setq magit-revert-buffers nil)
+  :bind (("s-g" . magit-status)
+	 ("s-b" . magit-blame))
+  :config (setq magit-push-always-verify nil))
 
-(require-package 'gitignore-mode)
-(require-package 'gitconfig-mode)
+(use-package git-gutter)
+(use-package gitignore-mode)
+(use-package gitconfig-mode)
 
 (if (or (or (eq system-type 'windows-nt)
       (eq system-type 'ms-dos))
      (< emacs-major-version 24))
-    (require-package 'yagist)
-  (require-package 'gist))
+    (use-package yagist)
+  (use-package gist))
 
-(require-package 'achievements)
+(use-package achievements)
 
-(require-package 'org)
+(use-package org)
 
 ;; solarized
-(require-package 'color-theme)
-(require-package 'color-theme-solarized)
+(use-package color-theme)
+(use-package color-theme-solarized)
+
 (if (>= emacs-major-version 24)
     (load-theme 'solarized t)
   (color-theme-solarized))
 
-(defun comment-line-toggle ()
-  "Comment or uncomment current line."
-  (interactive)
-  (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
+(use-package rust-mode
+  :config (defun rust-hook ()
+	    (if (not (string-match "cargo" compile-command))
+		(set (make-local-variable 'compile-command)
+		     "cargo build"))))
 
-(defun set-compile-cargo ()
-  "Rust projects default to 'cargo build' for compile command."
-  (if (not (string-match "cargo" compile-command))
-      (set (make-local-variable 'compile-command)
-	   "cargo build")))
+(add-hook 'rust-mode-hook 'rust-hook)
 
-(defun my-go-mode-hook ()
-  "Set up goimports and gofmt for go-mode."
-  (setq gofmt-command "goimports")
-  (add-hook 'before-save-hook 'gofmt-before-save)
-  (if (not (string-match "go" compile-command))
-      (set (make-local-variable 'compile-command)
-	   "go build -v && go test -v && go vet"))
-  (local-set-key (kbd "M-.") 'godef-jump)
-  (auto-complete-mode))
+(use-package go-mode
+  :config (defun go-hook ()
+	   (setq gofmt-command "goimports")
+	   (add-hook 'before-save-hook 'gofmt-before-save)
+	   (if (not (string-match "go" compile-command))
+	       (set (make-local-variable 'compile-command)
+		    "go build -v && go test -v && go vet"))
+	   (local-set-key (kbd "M-.") 'godef-jump)
+	   (auto-complete-mode)))
+
+(add-hook 'go-mode-hook 'go-hook)
+
+(use-package go-autocomplete)
+(use-package govet)
+(use-package golint)
 
 ;; to load these packages, make sure go is installed and
 ;; GOPATH is set, then run `go get github.com/dougm/goflymake`
@@ -163,8 +286,6 @@ locate PACKAGE."
     (require 'go-flymake)
     (require 'go-flycheck)))
 
-(add-hook 'rust-mode-hook 'set-compile-cargo)
-(add-hook 'go-mode-hook 'my-go-mode-hook)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
@@ -183,6 +304,10 @@ locate PACKAGE."
 				(eval-buffer)
 				(message "Buffer eval complete.")))
 (global-set-key (kbd "C-c k") 'magit-status)
+
+(global-set-key (kbd "C-c c") (lambda ()
+			      (interactive)
+			      (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
 
 ;; we want this last in order to override the upstream config
 (load "~/.local_emacs" t)
